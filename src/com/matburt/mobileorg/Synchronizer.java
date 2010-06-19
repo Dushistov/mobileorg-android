@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.io.OutputStreamWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -206,6 +207,26 @@ public class Synchronizer
         }
 
         return true;
+    }
+
+    public boolean syncWithSDFlash() {
+        String storageMode = this.appSettings.getString("storageMode", "");
+        if (!storageMode.equals("sdcard")) {
+            Log.e(LT, "syncWithSDFlash called for not sdcard storage mode");
+            return false;
+        }
+        
+        File root = Environment.getExternalStorageDirectory();
+        File morgDir = new File(root, "mobileorg");
+        FilenameFilter filter = new FilenameFilter() {
+                public boolean accept(File dir, String name) {
+                    return name.endsWith(".org");
+                }
+            };
+        String[] children = morgDir.list(filter);
+        for (int i = 0; i < children.length; ++i)
+            addOrUpdateFile(children[i], children[i]);
+	return true;
     }
 
     private void removeFile(String filename) {

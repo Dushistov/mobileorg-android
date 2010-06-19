@@ -103,6 +103,7 @@ public class MobileOrgActivity extends ListActivity
     private static final int OP_MENU_SYNC = 2;
     private static final int OP_MENU_OUTLINE = 3;
     private static final int OP_MENU_CAPTURE = 4;
+    private static final int OP_MENU_SYNC_WITH_SD = 5;
     private static final String LT = "MobileOrg";
     private ProgressDialog syncDialog;
     public boolean syncResults;
@@ -166,6 +167,7 @@ public class MobileOrgActivity extends ListActivity
         menu.add(0, MobileOrgActivity.OP_MENU_CAPTURE, 0, "Capture");
         menu.add(0, MobileOrgActivity.OP_MENU_SYNC, 0, "Sync");
         menu.add(0, MobileOrgActivity.OP_MENU_SETTINGS, 0, "Settings");
+        menu.add(0, MobileOrgActivity.OP_MENU_SYNC_WITH_SD, 0, "Sync with SD Card");
         return true;
     }
 
@@ -296,6 +298,14 @@ public class MobileOrgActivity extends ListActivity
         }
     }
 
+    private boolean syncWithSD() {
+        Synchronizer appSync = new Synchronizer(this);
+        boolean res = appSync.syncWithSDFlash();
+        runParser();
+        onResume();
+        return res;
+    }
+
     /* Handles item selections */
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -308,6 +318,8 @@ public class MobileOrgActivity extends ListActivity
             return true;
         case MobileOrgActivity.OP_MENU_CAPTURE:
             return this.runCapture();
+        case MobileOrgActivity.OP_MENU_SYNC_WITH_SD:
+            return this.syncWithSD();
         }
         return false;
     }
